@@ -18,13 +18,13 @@ catkin_package(
 	LIBRARIES
 		${PROJECT_NAME}
 		${PROJECT_NAME}_stages
+		${PROJECT_NAME}_stage_plugins
 	INCLUDE_DIRS
 		include
 	CATKIN_DEPENDS
 		geometry_msgs
 		moveit_core
 		moveit_task_constructor_msgs
-		rviz_marker_tools # << Added this
 		visualization_msgs
 )
 
