@@ -41,11 +41,6 @@ add_library(${PROJECT_NAME}_stages
 )
 target_link_libraries(${PROJECT_NAME}_stages ${PROJECT_NAME} ${catkin_LIBRARIES})
 
-add_library(${PROJECT_NAME}_stage_plugins
-   plugins.cpp
-)
-target_link_libraries(${PROJECT_NAME}_stage_plugins ${PROJECT_NAME}_stages ${catkin_LIBRARIES})
-
-install(TARGETS ${PROJECT_NAME}_stages ${PROJECT_NAME}_stage_plugins
+install(TARGETS ${PROJECT_NAME}_stages
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
