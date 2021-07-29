@@ -117,7 +117,7 @@ private:
 template <class ActionSpec>
 DeepGraspPose<ActionSpec>::DeepGraspPose(const std::string& action_name, const std::string& stage_name,
                                          double goal_timeout, double server_timeout)
-  : GeneratePose(stage_name), ActionBaseT(action_name, false, goal_timeout, server_timeout), found_candidates_(false) {
+  : GeneratePose(stage_name), ActionBaseT(action_name, true, goal_timeout, server_timeout), found_candidates_(false) {
 	auto& p = properties();
 	p.declare<std::string>("eef", "name of end-effector");
 	p.declare<std::string>("object");
@@ -154,6 +154,12 @@ bool DeepGraspPose<ActionSpec>::monitorGoal() {
 		if (ros::Time::now().toSec() > timeout_time && monitor_timeout) {
 			ActionBaseT::clientPtr_->cancelGoal();
 			ROS_ERROR_NAMED(LOGNAME, "Grasp pose generator time out reached");
+			return false;
+		} else if (ActionBaseT::clientPtr_->getState().toString() == "ABORTED") {
+			ROS_ERROR_NAMED(LOGNAME, "Grasp detection action server cancelled goal: Goal aborted");
+			return false;
+		} else if (ActionBaseT::clientPtr_->getState().toString() == "PREEMPTED") {
+			ROS_ERROR_NAMED(LOGNAME, "Grasp detection action server preempted goal: Goal preempted");
 			return false;
 		} else if (found_candidates_) {
 			// timeout not reached (or not active) and grasps are found
