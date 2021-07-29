@@ -259,7 +259,7 @@ bool Task::plan(size_t max_solutions) {
 		for (const auto& cb : impl->task_cbs_)
 			cb(*this);
 		if (impl->introspection_)
-			impl->introspection_->publishTaskState();
+			impl->introspection_->publishTaskState();	
 	}
 	printState();
 	return numSolutions() > 0;
@@ -270,12 +270,18 @@ void Task::preempt() {
 }
 
 moveit_msgs::MoveItErrorCodes Task::execute(const SolutionBase& s) {
-	actionlib::SimpleActionClient<moveit_task_constructor_msgs::ExecuteTaskSolutionAction> ac("execute_task_solution");
+	actionlib::SimpleActionClient<moveit_task_constructor_msgs::ExecuteTaskSolutionAction> ac("execute_task_solution", true);
 	ac.waitForServer();
 
 	moveit_task_constructor_msgs::ExecuteTaskSolutionGoal goal;
 	s.fillMessage(goal.solution, pimpl()->introspection_.get());
 	s.start()->scene()->getPlanningSceneMsg(goal.solution.start_scene);
+
+/* 	if(!pimpl()->preempt_requested_){
+	ac.sendGoal(goal);
+	ac.waitForResult();
+	return ac.getResult()->error_code;
+	} */
 
 	ac.sendGoal(goal);
 	ac.waitForResult();
